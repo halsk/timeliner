@@ -34,9 +34,34 @@ jQuery(function($) {
 var TimelinerView = Backbone.View.extend({
   events: {
     'click .controls .js-show-toolbox': '_onShowToolbox',
-    'submit .toolbox form': '_onSearch'
+    'submit .toolbox form': '_onSearch',
+    'click .close-button': '_onSwitchTimelineView'
   },
 
+  _onSwitchTimelineView: function(e) {
+    e.preventDefault();
+    if (this.timeline.$el.width() == 50){
+      this.timeline.$el.width(this.originalTWidth);
+      this.map.$el.width(this.originalMWidth);
+      this.map.$el.offset({left:this.originalMOffset});
+      this.timeline.$el.show();
+      this.map.map.invalidateSize();
+      this.$el.find('.close-button').offset({left:this.originalTWidth - 24});
+      this.$el.find('#hide-timeliner-icon').toggleClass('icon-chevron-left icon-chevron-right');
+    }else{
+      this.originalTWidth = this.timeline.$el.width();
+      this.originalMOffset = this.map.$el.offset().left;
+      this.originalMWidth = this.map.$el.width();
+      this.timeline.$el.width(50);
+      this.timeline.$el.hide();
+      this.map.$el.width(this.$el.width() - 50);
+      this.map.$el.offset({left:50});
+      this.map.map.invalidateSize();
+      this.$el.find('.close-button').offset({left:24});
+      this.$el.find('#hide-timeliner-icon').toggleClass('icon-chevron-left icon-chevron-right');
+    }
+
+  },
   _onShowToolbox: function(e) {
     e.preventDefault();
     if (this.$el.find('.toolbox').hasClass('hideme')) {
